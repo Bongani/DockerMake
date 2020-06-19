@@ -268,4 +268,24 @@ def test_implicit_all_with_abstract_steps(abstract_steps):
     client = helpers.get_client()
     client.images.get("definite")
     with pytest.raises(docker.errors.ImageNotFound):
-        client.images.get("abstract")
+        client.images.get('abstract')
+
+
+def test_jinja_arguments(tmpdir):
+    tmpdir = str(tmpdir)
+    run_docker_make("-p -n --dockerfile-dir %s --build-arg PYTHON=3 -f data/jinja_args.yml.j2 first" % tmpdir)
+    path = os.path.join(tmpdir, "Dockerfile.first")
+    assert os.path.isfile(path)
+
+    with open(path, "r") as f:
+        lines = f.read().splitlines()
+        last_line = lines[-1]
+        print(last_line)
+        assert last_line == "RUN echo 'python3'"
+
+
+jinja_targets = helpers.creates_images('target-a', 'target-b')
+def test_jinja_preprocessing(jinja_targets, docker_client):
+    run_docker_make('-f data/jinja.yml.j2 target-a target-b')
+    docker_client.images.get('target-a')
+    docker_client.images.get('target-b')

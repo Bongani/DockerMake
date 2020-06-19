@@ -75,7 +75,7 @@ def run(args):
             msg += "\nType `docker-make --help` to see usage."
         raise errors.MissingFileError(msg)
 
-    defs = ImageDefs(args.makefile)
+    defs = ImageDefs(args.makefile, args.build_arg)
 
     if args.list:
         utils.list_image_defs(args, defs)
