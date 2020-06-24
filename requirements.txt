@@ -3,3 +3,5 @@ termcolor
 docker >=3.2
 future
 pyyaml
+graphviz==0.14
+jinja2

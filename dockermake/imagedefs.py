@@ -70,7 +70,11 @@ class ImageDefs(object):
                 "Circular _SOURCES_ in %s" % self.makefile_path
             )
 
-        build_args = utils._make_buildargs(self.args)
+        build_args = []
+
+        if self.args:
+            build_args = utils._make_buildargs(self.args)
+
         self._sources.add(fname)
         with open(fname, 'r') as yaml_file:
             content = yaml_file.read()
@@ -78,7 +82,7 @@ class ImageDefs(object):
                 import jinja2
                 template = jinja2.Template(content)
                 content = template.render(args=build_args)
-            yamldefs = yaml.load(six.StringIO(content))
+            yamldefs = yaml.load(six.StringIO(content), Loader=yaml.SafeLoader)
         self._check_yaml_and_paths(filename, yamldefs)
 
         # Recursively read all steps in included files from the _SOURCES_ field and
