@@ -228,6 +228,7 @@ class ImageDefs(object):
                     buildargs=buildargs,
                     squash=squash,
                     secret_files=secret_files,
+                    enable_experimental=kwargs.get('enable_experimental', False)
                 )
             )
 
@@ -270,7 +271,7 @@ class ImageDefs(object):
             steps=build_steps,
             sourcebuilds=sourcebuilds,
             from_image=from_image,
-            **kwargs,
+            **kwargs
         )
 
     def _generate_stepname(self, istep, image, build_uuid):

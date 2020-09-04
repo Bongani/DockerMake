@@ -46,14 +46,14 @@ class BuildTarget(object):
         steps,
         sourcebuilds,
         from_image,
-        keepbuildtags=False,
+        **kwargs
     ):
         self.imagename = imagename
         self.steps = steps
         self.sourcebuilds = sourcebuilds
         self.targetname = targetname
         self.from_image = from_image
-        self.keepbuildtags = keepbuildtags
+        self.keepbuildtags = kwargs.get('keepbuildtags', False)
 
     def write_dockerfile(self, output_dir):
         """ Used only to write a Dockerfile that will NOT be built by docker-make

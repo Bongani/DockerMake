@@ -81,6 +81,15 @@ def make_arg_parser():
         default="docker_makefiles",
         help="Directory to save dockerfiles in (default: ./docker_makefiles)",
     )
+    df.add_argument(
+        "-ees",
+        "--enable-experimental-syntax",
+        required=False,
+        action='store_true',
+        default=False,
+        help="Enable Docker Frontend Experimental Syntax "
+             "(https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md)",
+    )
 
     df = parser.add_argument_group("Graphviz")
 
