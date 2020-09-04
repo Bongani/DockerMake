@@ -25,6 +25,7 @@ from . import staging
 from . import errors
 
 DOCKER_TMPDIR = "_docker_make_tmp/"
+BUILD_EXPERIMENTAL_COMMAND = "# syntax = docker/dockerfile:1.0-experimental"
 
 
 class BuildStep(object):
@@ -40,6 +41,7 @@ class BuildStep(object):
         buildargs (dict): build-time "buildargs" for dockerfiles
         squash (bool): whether the result should be squashed
         secret_files (List[str]): list of files to delete prior to squashing (squash must be True)
+        enable_experimental: If True, enable the buildkit experimental syntax. False by default
     """
 
     def __init__(
@@ -54,6 +56,7 @@ class BuildStep(object):
         buildargs=None,
         squash=False,
         secret_files=None,
+        enable_experimental=False
     ):
         self.imagename = imagename
         self.baseimage = baseimage
@@ -68,6 +71,7 @@ class BuildStep(object):
         self.buildargs = buildargs
         self.squash = squash
         self.secret_files = secret_files
+        self.enable_experimental = enable_experimental
 
         if secret_files:
             assert (
@@ -126,6 +130,8 @@ class BuildStep(object):
             )
 
         dockerfile = "\n".join(self.dockerfile_lines)
+        if self.enable_experimental:
+            dockerfile = "\n".join([BUILD_EXPERIMENTAL_COMMAND, dockerfile])
 
         kwargs = dict(
             tag=self.buildname,
@@ -329,7 +335,12 @@ class BuildStep(object):
 
     @property
     def dockerfile_lines(self):
-        lines = ["FROM %s\n" % self.baseimage]
+        if self.enable_experimental:
+            lines = [BUILD_EXPERIMENTAL_COMMAND]
+        else:
+            lines = []
+
+        lines.append("FROM %s\n" % self.baseimage)
         if self.squash:
             lines.append("# This build step should be built with --squash")
         if self.secret_files:

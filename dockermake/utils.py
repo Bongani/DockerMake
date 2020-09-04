@@ -127,6 +127,7 @@ def build_targets(args, defs, targets):
 
     for t in targets:
         try:
+            kwargs = {'enable_experimental': args.enable_experimental_syntax}
             builder = defs.generate_build(
                 t,
                 generate_name(t, args.repository, args.tag),
@@ -135,6 +136,7 @@ def build_targets(args, defs, targets):
                 cache_tag=args.cache_tag,
                 keepbuildtags=args.keep_build_tags,
                 buildargs=buildargs,
+                **kwargs
             )
         except errors.NoBaseError:
             if args.all:
@@ -154,7 +156,7 @@ def build_targets(args, defs, targets):
 
     for b in builders:
         b.build(
-            client, nobuild=args.no_build, usecache=not args.no_cache, pull=args.pull
+            client, nobuild=args.no_build, usecache=not args.no_cache, pull=args.pull,
         )
         if not args.no_build:
             print("  docker-make built:", b.targetname)
