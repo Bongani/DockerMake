@@ -20,6 +20,7 @@ from termcolor import cprint, colored
 from dockermake.step import FileCopyStep
 from . import utils
 
+BUILD_EXPERIMENTAL_COMMAND = "# syntax = docker/dockerfile:1.0-experimental"
 
 _updated_staging_images = (
     set()
@@ -46,14 +47,16 @@ class BuildTarget(object):
         steps,
         sourcebuilds,
         from_image,
-        **kwargs
+        keepbuildtags=False,
+        enable_experimental=False
     ):
         self.imagename = imagename
         self.steps = steps
         self.sourcebuilds = sourcebuilds
         self.targetname = targetname
         self.from_image = from_image
-        self.keepbuildtags = kwargs.get('keepbuildtags', False)
+        self.keepbuildtags = keepbuildtags
+        self.enable_experimental = enable_experimental
 
     def write_dockerfile(self, output_dir):
         """ Used only to write a Dockerfile that will NOT be built by docker-make
@@ -67,6 +70,8 @@ class BuildTarget(object):
                 lines.extend(step.dockerfile_lines)
             else:
                 lines.extend(step.dockerfile_lines[1:])
+        if self.enable_experimental:
+            lines.insert(0, BUILD_EXPERIMENTAL_COMMAND)
         path = os.path.join(output_dir, "Dockerfile.%s" % self.imagename)
         with open(path, "w") as outfile:
             outfile.write("\n".join(lines))

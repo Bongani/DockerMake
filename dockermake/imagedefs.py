@@ -227,8 +227,7 @@ class ImageDefs(object):
                     cache_from=cache_from,
                     buildargs=buildargs,
                     squash=squash,
-                    secret_files=secret_files,
-                    enable_experimental=kwargs.get('enable_experimental', False)
+                    secret_files=secret_files
                 )
             )
 

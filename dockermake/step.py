@@ -335,12 +335,7 @@ class BuildStep(object):
 
     @property
     def dockerfile_lines(self):
-        if self.enable_experimental:
-            lines = [BUILD_EXPERIMENTAL_COMMAND]
-        else:
-            lines = []
-
-        lines.append("FROM %s\n" % self.baseimage)
+        lines = ["FROM %s\n" % self.baseimage]
         if self.squash:
             lines.append("# This build step should be built with --squash")
         if self.secret_files:
