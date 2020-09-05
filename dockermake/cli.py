@@ -87,7 +87,7 @@ def make_arg_parser():
         required=False,
         action='store_true',
         default=False,
-        help="Enable Docker Frontend Experimental Syntax "
+        help="Enable Docker Frontend Experimental Syntax. Only available in writing Docker file at the moment"
              "(https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md)",
     )
 

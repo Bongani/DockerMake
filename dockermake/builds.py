@@ -38,6 +38,7 @@ class BuildTarget(object):
         stagedfiles (List[StagedFile]): list of files to stage into this image from other images
         from_image (str): External base image name
         keepbuildtags (bool): Keep intermediate build tags (dmkbuild_[target]_[stepnum]_[uuid])
+        enable_experimental: If True, enable the buildkit experimental syntax. False by default
     """
 
     def __init__(

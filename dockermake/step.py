@@ -25,8 +25,6 @@ from . import staging
 from . import errors
 
 DOCKER_TMPDIR = "_docker_make_tmp/"
-BUILD_EXPERIMENTAL_COMMAND = "# syntax = docker/dockerfile:1.0-experimental"
-
 
 class BuildStep(object):
     """ Stores and runs the instructions to build a single step.
@@ -41,7 +39,6 @@ class BuildStep(object):
         buildargs (dict): build-time "buildargs" for dockerfiles
         squash (bool): whether the result should be squashed
         secret_files (List[str]): list of files to delete prior to squashing (squash must be True)
-        enable_experimental: If True, enable the buildkit experimental syntax. False by default
     """
 
     def __init__(
@@ -130,8 +127,6 @@ class BuildStep(object):
             )
 
         dockerfile = "\n".join(self.dockerfile_lines)
-        if self.enable_experimental:
-            dockerfile = "\n".join([BUILD_EXPERIMENTAL_COMMAND, dockerfile])
 
         kwargs = dict(
             tag=self.buildname,
