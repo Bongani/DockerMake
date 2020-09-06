@@ -26,7 +26,6 @@ from . import errors
 
 DOCKER_TMPDIR = "_docker_make_tmp/"
 
-
 class BuildStep(object):
     """ Stores and runs the instructions to build a single step.
 
@@ -54,6 +53,7 @@ class BuildStep(object):
         buildargs=None,
         squash=False,
         secret_files=None,
+        enable_experimental=False
     ):
         self.imagename = imagename
         self.baseimage = baseimage
@@ -68,6 +68,7 @@ class BuildStep(object):
         self.buildargs = buildargs
         self.squash = squash
         self.secret_files = secret_files
+        self.enable_experimental = enable_experimental
 
         if secret_files:
             assert (

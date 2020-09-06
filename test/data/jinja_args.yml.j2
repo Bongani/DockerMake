@@ -1,0 +1,9 @@
+first:
+  FROM: python:3.6-slim
+  build: |
+    RUN echo 'test'
+    {% if args.PYTHON == "3" %}
+    RUN echo 'python3'
+    {% else %}
+    RUN echo 'python2'
+    {% endif %}

@@ -81,6 +81,32 @@ def make_arg_parser():
         default="docker_makefiles",
         help="Directory to save dockerfiles in (default: ./docker_makefiles)",
     )
+    df.add_argument(
+        "-ees",
+        "--enable-experimental-syntax",
+        required=False,
+        action='store_true',
+        default=False,
+        help="Enable Docker Frontend Experimental Syntax. Only available in writing Docker file at the moment"
+             "(https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md)",
+    )
+
+    df = parser.add_argument_group("Graphviz")
+
+    df.add_argument(
+        "-pd",
+        "--print-dependencies",
+        "--print_dependencies",
+        action="store_true",
+        help="Print dependencies",
+    )
+
+    df.add_argument(
+        "-df",
+        "--dependencies-file",
+        default="docker_network.png",
+        help="Location to store the image of the dependency graph (default: ./docker_network.png). Currently only supports png",
+    )
 
     ca = parser.add_argument_group("Image caching")
     ca.add_argument(

@@ -1,5 +1,5 @@
 # Docker-make
-[![Codeship Status for avirshup/DockerMake](https://app.codeship.com/projects/d4a701b0-2114-0138-0bfb-1a499be1ccac/status?branch=master)](https://app.codeship.com/projects/382713)
+[![Codeship Status for avirshup/DockerMake](https://app.codeship.com/projects/d4a701b0-2114-0138-0bfb-1a499be1ccac/status?branch=master)](https://app.codeship.com/projects/382713)	
 [ ![PyPI version](https://badge.fury.io/py/DockerMake.svg)](https://badge.fury.io/py/DockerMake)
 
 ## Table of Contents
@@ -33,6 +33,7 @@ pip install DockerMake
 
 This will install the command line tool, `docker-make`, and its supporting python package, which you can import as `import dockermake`. 
 
+Additionally you have to install GraphViz to visualise the graph. The download page is at: https://graphviz.org/download/.
 
 ## Run it
 
@@ -393,14 +394,25 @@ Here's the dependency graph and generated Dockerfiles:
 ![dockerfiles](img/step2.png)
 
 
+### Graphviz
+
+If you have GraphViz installed, then a dependency graph can be created in `network.png` with the command:
+
+```bash
+docker-make --all -pd -df network.png
+```
+
+Note: you have to specify `--all` to create the graph. There is not support for subgraphs.
+
 
 ## Command line usage 
 ```
 usage: docker-make [-h] [-f MAKEFILE] [-a] [-l] [--build-arg BUILD_ARG]
                    [--requires [REQUIRES [REQUIRES ...]]] [--name NAME] [-p]
-                   [-n] [--dockerfile-dir DOCKERFILE_DIR] [--pull]
-                   [--cache-repo CACHE_REPO] [--cache-tag CACHE_TAG]
-                   [--no-cache] [--bust-cache BUST_CACHE] [--clear-copy-cache]
+                   [-n] [--dockerfile-dir DOCKERFILE_DIR] [--print-dependencies]
+                   [--dependencies-file DEPENDENCIES_FILE] [--pull] [--cache-repo CACHE_REPO]
+                   [--cache-tag CACHE_TAG] [--no-cache]
+                   [--bust-cache BUST_CACHE] [--clear-copy-cache]
                    [--keep-build-tags] [--repository REPOSITORY] [--tag TAG]
                    [--push-to-registry] [--registry-user REGISTRY_USER]
                    [--registry-token REGISTRY_TOKEN] [--version] [--help-yaml]
@@ -428,6 +440,16 @@ Choosing what to build:
                         Build a special image from these requirements.
                         Requires --name
   --name NAME           Name for custom docker images (requires --requires)
+
+Graphviz:
+  -pd, --print-dependencies, --print_dependencies
+                        Print dependencies. Note: A target must be specified 
+                        before printing the dependencies
+
+  -df DEPENDENCIES_FILE, --dependencies-file DEPENDENCIES_FILE
+                        Location to store the image of the dependency graph
+                        (default: ./docker_network.png). Note: It currently only
+                        supports png. 
 
 Dockerfiles:
   -p, --print-dockerfiles, --print_dockerfiles

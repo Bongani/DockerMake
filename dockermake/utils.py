@@ -26,6 +26,7 @@ from . import errors
 _dockerclient = None
 
 
+
 def get_client_api():
     return get_client().api
 
@@ -126,6 +127,7 @@ def build_targets(args, defs, targets):
 
     for t in targets:
         try:
+            kwargs = {'enable_experimental': args.enable_experimental_syntax}
             builder = defs.generate_build(
                 t,
                 generate_name(t, args.repository, args.tag),
@@ -134,6 +136,7 @@ def build_targets(args, defs, targets):
                 cache_tag=args.cache_tag,
                 keepbuildtags=args.keep_build_tags,
                 buildargs=buildargs,
+                **kwargs
             )
         except errors.NoBaseError:
             if args.all:
@@ -147,9 +150,13 @@ def build_targets(args, defs, targets):
         else:
             builders.append(builder)
 
+    if args.print_dependencies:
+        _print_dependencies(defs, args.dependencies_file)
+
+
     for b in builders:
         b.build(
-            client, nobuild=args.no_build, usecache=not args.no_cache, pull=args.pull
+            client, nobuild=args.no_build, usecache=not args.no_cache, pull=args.pull,
         )
         if not args.no_build:
             print("  docker-make built:", b.targetname)
@@ -167,6 +174,35 @@ def build_targets(args, defs, targets):
                 built[-1] += " -- pushed to %s" % b.targetname.split("/")[0]
 
     return built, warnings
+
+
+def format_name(str):
+    return str.replace(':', '')
+
+
+def _print_dependencies(defs, filename):
+
+    # Dynamically import graphviz so that the entire project is not dependent that graphviz is installed
+    
+    from graphviz import Digraph
+
+    name, file_extension = os.path.splitext(filename)
+    dot = Digraph(comment=filename)
+    ymldefs = defs.ymldefs
+
+    for module_name in ymldefs:
+        module = ymldefs[module_name]
+        if module_name in defs.all_targets:
+            dot.node(format_name(module_name), format_name(module_name), color="blue")
+
+        if "requires" in module:
+            for r in module["requires"]:
+                dot.edge(format_name(module_name), format_name(r))
+        if "FROM" in module:
+            dot.node(format_name(module["FROM"]), format_name(module["FROM"]), shape="box")
+            dot.edge(format_name(module_name), format_name(module["FROM"]))
+
+    dot.render(name, format=file_extension.replace(".", ""), cleanup=True)
 
 
 def _make_buildargs(build_args):
